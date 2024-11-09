@@ -1,161 +1,109 @@
 
-# HR Resume Screening Assistance Tool
+# WildfirePrediction Project Documentation
 
-## Project Overview
+## CSCE 5900 Special Problems Course Project
 
-The HR Resume Screening Assistance Tool is a web application designed to streamline the process of resume screening and analysis for HR professionals. By leveraging advanced natural language processing (NLP) techniques, the tool helps recruiters quickly assess and match candidate qualifications with job descriptions. This tool is particularly beneficial for high-volume recruitment, providing an efficient, data-driven approach to filtering candidates.
+### Project Overview
+The objective of this project is to analyze geospatial data, specifically temperature data, and visualize this data on maps. Using netCDF files for temperature data and shapefiles for geographical boundaries, the project consists of several stages: data loading, manipulation, visualization, and animation creation.
 
-### Key Features
-- **Automated Resume Analysis**: Extracts and analyzes candidate data to find the best match for job descriptions.
-- **Scalable Processing**: Supports multiple resumes in PDF format, facilitating quick screening.
-- **User-Friendly Interface**: Built with Streamlit, allowing easy navigation without requiring technical knowledge.
-- **Integration with Vector Database**: Uses Pinecone for storing and retrieving resume embeddings to improve candidate matching.
-- **Custom Embeddings**: Generates semantic embeddings using the `all-MiniLM-L6-v2` SentenceTransformer model.
+The project is structured around multiple Jupyter notebooks, each corresponding to a different stage of the data analysis pipeline:
 
-## Architecture and Design
+1. **Loading** geospatial data from netCDF files and shapefiles.
+2. **Transforming and analyzing** the data.
+3. **Visualizing** the results.
+4. **Saving** visualizations as images or animations.
 
-The project follows a modular architecture where `app.py` serves as the main entry point, providing a Streamlit interface for users, while `utils.py` contains helper functions to process resumes, generate embeddings, and interact with the vector database.
+---
 
-### Architecture Diagram
-The architecture includes the following components:
-1. **Frontend (Streamlit)**: Provides a web-based UI where users input job descriptions and upload resumes.
-2. **Backend Processing (LangChain, SentenceTransformer)**: Utilizes NLP models to generate embeddings from resumes and job descriptions.
-3. **Vector Database (Pinecone)**: Stores embeddings and allows similarity-based retrieval, facilitating candidate matching.
+### Notebook Descriptions
 
-(*Include architecture diagram created on Lucidchart here*)
+1. **Untitled.ipynb**
+   - Loads a shapefile and a netCDF file, then plots temperature data from the netCDF file on a map with the shapefile as a boundary. 
+   - Down-samples the data and plots the down-sampled temperature data.
 
-## Technology Stack
+2. **DAYMET(NA)(TMIN)(2000).ipynb**
+   - Loads and visualizes Daymet data for minimum temperature, overlaying it with a shapefile grid.
+   - Attempts to reproject the shapefile to match the CRS of the Daymet data.
 
-- **Streamlit**: For building a user-friendly web interface.
-- **LangChain**: Provides NLP tools and embeddings models, facilitating the generation and summarization of resume data.
-- **SentenceTransformer (`all-MiniLM-L6-v2`)**: Converts resumes into dense vector embeddings.
-- **Pinecone**: A vector database for efficient storage and retrieval of resume embeddings.
-- **PyPDF**: Extracts text from uploaded PDF resumes.
+3. **DAYMET(NA)(TMIN)(2000) (2).ipynb**
+   - Similar to the previous notebook, but includes more detailed comments explaining the processing steps.
 
-## Installation and Setup
+4. **dataRemix_tmin.ipynb**
+   - Overlays minimum temperature data from a Daymet file on a clipped grid.
+   - Demonstrates various approaches to the overlay using `rasterio` and `geopandas` for geospatial operations and `matplotlib` for visualization.
 
-### Prerequisites
-Ensure Python 3.x is installed on your machine.
+5. **Copy_of_overlay_that_keeps_skipping_every_tif_file_this_keeps_crashing_because_no_ram.ipynb**
+   - Attempts to overlay multiple TIF files onto a shapefile of North America.
+   - Plots the shapefile, then loops through the TIF files, plotting each one at the corresponding coordinates. This notebook can encounter memory issues due to large data size.
 
-### Steps
+6. **Breaking_down_the_netCDF_file_into_daily_files.ipynb**
+   - Contains a function to split a netCDF file into daily files.
+   - Loops through each day in the dataset, selects data for that day, and saves it as a new netCDF file.
 
-1. Clone the repository and navigate to the project directory.
-   ```bash
-   git clone <repository-url>
-   cd HR-Resume-Screening-Assistance-Project
-   ```
+7. **Combining_the_images_to_create_animation.ipynb**
+   - Combines multiple images into a GIF animation.
+   - Loops through a range of days, generates plots for each, saves them as images, and combines all images into a single GIF.
 
-2. Install the required dependencies.
-   ```bash
-   pip install -r requirements.txt
-   ```
+8. **idk.ipynb**
+   - Loads a shapefile and netCDF file, down-samples the netCDF data, and plots the data with a color bar.
+   - Contains a loop to generate a plot for a range of days and save each plot as an image.
 
-3. Configure environment variables:
-   - Copy `.env.example` to `.env`.
-   - Update Pinecone API details and other necessary configurations in the `.env` file.
+---
 
-4. Run the Streamlit application:
-   ```bash
-   streamlit run app.py
-   ```
+### Project Outcomes
+The project provides insights into manipulating and visualizing geospatial data. The ability to overlay temperature data on a map and animate it over time offers valuable visualization of changing temperature patterns. Techniques for handling large datasets and managing memory usage were also explored.
 
-## Usage Instructions
+---
 
-1. Open the Streamlit application in a browser.
-2. Input the job description in the provided text area.
-3. Specify the number of resumes to return in the results.
-4. Upload resume PDFs by selecting files.
-5. Click "Help me with the analysis" to receive processed results and insights.
+### Usage Guide
 
-## Configuration and Environment Variables
+To use each notebook:
+1. **Ensure all required data paths** are correctly specified within each notebook.
+2. **Run all cells sequentially** in the order provided to ensure that data loading, processing, and visualization steps execute correctly.
 
-Ensure the following variables are set in your `.env` file:
+Each notebook is self-contained and does not require specific input beyond the data paths already provided.
 
-- **PINECONE_API_KEY**: API key for Pinecone.
-- **PINECONE_ENVIRONMENT**: Pinecone environment setting.
-- **PINECONE_INDEX_NAME**: Index name for the vector database.
+---
 
-## Testing Guidelines
+### Troubleshooting
 
-- Test the application by uploading a sample set of resumes and providing various job descriptions.
-- Ensure Pinecone is configured correctly to retrieve the most relevant resumes.
+**Memory Errors**  
+If you encounter `MemoryError` messages while running the notebooks, this is likely due to the large size of the data.  
+Suggestions:
+- **Process data in smaller chunks** using libraries like `Dask`.
+- **Optimize memory usage** by adjusting code to handle data in smaller segments.
 
-## Further Enhancements
+---
 
-- **Multi-format Support**: Expand support for other resume formats (e.g., Word documents).
-- **Advanced NLP Models**: Incorporate more sophisticated NLP models or fine-tune embeddings for better accuracy.
+### Data Documentation
 
-# HR-Resume-Screening-Assistance-Project
-The Resume Screening Assistance Tool improves HR efficiency by streamlining the resume review process. It automates analysis using NLP to match candidate qualifications with job descriptions, saving time and providing insights. With PDF support and a user-friendly interface, it scales with growth, enhancing recruitment quality and reducing time-to- hire 
+**Data Sources**  
+- **netCDF Files**: Contain daily minimum temperature data across North America, organized by latitude and longitude. Each file represents a different day.
+- **Shapefiles**: Provide geographical boundaries used in visualizations. For this project, a North America shapefile is used as a base for mapping the temperature data.
 
+---
 
-# Resume Screening Assistance Tool
+### Code Explanation
 
+The code in this project is written in Python and organized across several Jupyter notebooks, each representing different stages of the analysis pipeline.
 
+#### Key Python Libraries
+- **netCDF4**: For reading netCDF files.
+- **geopandas**: For working with shapefiles and other geospatial data.
+- **rasterio**: For raster data processing and overlaying data on shapefiles.
+- **matplotlib**: For creating static visualizations.
+- **imageio**: For creating GIF animations from image sequences.
 
-## Overview
-The Resume Screening Assistance Tool is a powerful web application designed to enhance the efficiency of the resume screening process for HR professionals. By leveraging advanced natural language processing (NLP) techniques, this tool simplifies the recruitment workflow, enabling organizations to quickly identify the best-fit candidates.
+---
 
-## Key Features
-- **Streamlined Resume Review**: Effortlessly input job descriptions and receive insights on candidate resumes.
-- **Automated Analysis**: Automatically analyzes resumes and job descriptions using NLP for better candidate matching.
-- **Data-Driven Insights**: Provides summaries of candidate qualifications to support informed hiring decisions.
-- **PDF Support**: Upload and process resumes in PDF format, a common candidate submission method.
-- **User-Friendly Interface**: Built with Streamlit for easy navigation, accessible to users without technical expertise.
-- **Scalable**: Designed to handle increasing resume volumes as organizations grow.
+### Future Work
 
-## Getting Started
-### Prerequisites
-To run this project, ensure you have the following installed:
-- Python 3.7 or higher
-- Streamlit
-- Required libraries (see `requirements.txt`)
+1. **Improve Data Processing Efficiency**  
+   - Modify the data pipeline to reduce memory usage, either by processing in smaller chunks or by using optimized data structures.
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/resume-screening-tool.git
-   cd resume-screening-tool
-   ```
+2. **Enhance Data Analysis**  
+   - Consider additional analyses, such as identifying temperature trends over time or correlating temperature changes with environmental factors.
 
-2. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+---
 
-3. Set up your environment:
-   Create a `.env` file using the provided `.env.example` as a template to configure any necessary environment variables.
-
-### Running the Application
-Launch the application using Streamlit:
-```bash
-streamlit run app.py
-```
-Visit `http://localhost:8501` in your web browser to access the tool.
-
-## Usage
-1. **Input Job Description**: Paste the job description into the designated text area.
-2. **Upload Resumes**: Upload candidate resumes in PDF format.
-3. **Analyze**: Review the generated insights and summaries to identify the best candidates.
-
-## Contributing
-We welcome contributions! If you have suggestions for improvements or new features, please follow these steps:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeature`).
-3. Make your changes and commit them (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a Pull Request.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Acknowledgements
-- [Streamlit](https://streamlit.io/) for the amazing framework.
-- [OpenAI](https://openai.com/) for the NLP models.
-- Any other contributors or resources.
-
-## Contact
-For questions or inquiries, please reach out to:
-- **Prasanth Vemula** - [prasanthvemula1729@gmail.com](prasanthvemula1729@gmail.com)
-- GitHub: [VemulaDowtyasriprasanth](https://github.com/VemulaDowtyasriprasanth)
-
+This documentation provides an overview of the **WildfirePrediction** project structure, goals, and methods. It can serve as a guide for running the project notebooks and understanding the steps required to replicate the analyses and visualizations.
